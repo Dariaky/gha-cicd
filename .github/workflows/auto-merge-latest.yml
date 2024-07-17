@@ -1,0 +1,46 @@
+name: Auto merge latest
+run-name: Auto merge latest from master into dev and qa branches
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  merge-branches:
+    runs-on: ubuntu-latest
+    outputs:
+      SUCCESS_DEV: ${{ steps.merge-dev.outputs.SUCCESS_DEV }}
+      SUCCESS_QA: ${{ steps.merge-qa.outputs.SUCCESS_QA }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Update DEV
+        id: merge-dev
+        run: |
+          git checkout dev
+          if git merge --no-ff --no-edit -m "Merge master into dev (Github auto merge)" origin/master; then
+           git push origin dev
+           echo "SUCCESS_DEV=true" >> $GITHUB_OUTPUT
+          else
+           git merge --abort
+           echo "auto merge to dev failed due to conflicts"
+           echo "SUCCESS_DEV=false" >> $GITHUB_OUTPUT
+
+      - name: Update QA
+        id: merge-qa
+        run: |
+          git checkout qa
+          if git merge --no-ff --no-edit -m "Merge master into qa (Github auto merge)" origin/master; then
+           git push origin qa
+           echo "SUCCESS_QA=true" >> $GITHUB_OUTPUT
+          else
+           git merge --abort
+           echo "auto merge to qa failed due to conflicts"
+           echo "SUCCESS_QA=false" >> $GITHUB_OUTPUT
+
+
+
+
