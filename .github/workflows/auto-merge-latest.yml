@@ -50,5 +50,52 @@ jobs:
           fi
 
 
-
-
+  post-to-slack:
+    runs-on: ubuntu-latest
+    needs: merge-branches
+    if: ${{ (needs.merge-branches.outputs.SUCCESS_DEV == 'false') || (needs.merge-branches.outputs.SUCCESS_QA == 'false') }}
+    steps:
+      - name: Set SHORT_SHA environment variable
+        run: echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+      - name: Set Slack Message
+        run: |
+          if [ "${{ needs.merge-branches.outputs.SUCCESS_DEV }}" == "false" ] && [ "${{ needs.merge-branches.outputs.SUCCESS_QA }}" == "false" ]; then
+            echo "SLACK_MESSAGE=Unable to merge master to DEV and QA. Conflict should be resolved manually." >> $GITHUB_ENV
+          elif [ "${{ needs.merge-branches.outputs.SUCCESS_DEV }}" == "false" ]; then
+            echo "SLACK_MESSAGE=Unable to merge master to DEV. Conflict should be resolved manually." >> $GITHUB_ENV
+          else
+            echo "SLACK_MESSAGE=Unable to merge master to QA. Conflict should be resolved manually." >> $GITHUB_ENV
+          fi
+      - name: Send custom JSON data to Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "attachments": [
+                {
+                  "color": "warning",
+                  "title": ":mega: Github Action Alert :mega:",
+                  "fields": [
+                    {
+                      "title": "Auto merge failed due to conflicts",
+                      "value": "${{ env.SLACK_MESSAGE }}"
+                    },
+                    {
+                      "title": "Commit",
+                      "value": "<https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${{ env.SHORT_SHA }}>",
+                      "short": true
+                    },
+                    {
+                      "title": "Actions URL",
+                      "value": "<${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}|Link to workflow run>",
+                      "short": true
+                    }
+                  ],
+                  "footer": "<https://github.com/${{ github.workflow_ref }}|This slack message was automatically generated via the 'Update from latest' Github Actions workflow>"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
