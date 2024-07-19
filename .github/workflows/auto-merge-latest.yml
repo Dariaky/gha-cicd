@@ -18,6 +18,10 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all branches
 
+      - name: Print info
+        run: |
+          echo "${{ toJSON(github) }}"
+
       - name: Configure git credentials
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -43,7 +47,6 @@ jobs:
           if git merge --no-ff --no-edit -m "Merge master into qa (Github auto merge)" origin/master; then
             git push origin qa
             echo "SUCCESS_QA=true" >> $GITHUB_OUTPUT
-            echo "${{ toJSON(github) }}"
           else
             git merge --abort
             echo "auto merge to qa failed due to conflicts"
