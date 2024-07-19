@@ -21,6 +21,7 @@ jobs:
       - name: Print info
         run: |
           echo "${{ toJSON(github) }}"
+          fi
 
       - name: Configure git credentials
         run: |
