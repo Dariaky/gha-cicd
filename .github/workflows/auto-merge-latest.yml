@@ -92,7 +92,7 @@ jobs:
                       "short": true
                     }
                   ],
-                  "footer": "<https://github.com/${{ github.workflow_ref }}|This slack message was automatically generated via the 'Update from latest' Github Actions workflow>"
+                  "footer": "<https://github.com/${{ github.workflow }}|This slack message was automatically generated via the 'Auto merge latest' Github Actions workflow>"
                 }
               ]
             }
