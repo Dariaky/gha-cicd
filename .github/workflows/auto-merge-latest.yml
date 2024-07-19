@@ -22,24 +22,26 @@ jobs:
         run: |
           git checkout dev
           if git merge --no-ff --no-edit -m "Merge master into dev (Github auto merge)" origin/master; then
-           git push origin dev
-           echo "SUCCESS_DEV=true" >> $GITHUB_OUTPUT
+            git push origin dev
+            echo "SUCCESS_DEV=true" >> $GITHUB_OUTPUT
           else
-           git merge --abort
-           echo "auto merge to dev failed due to conflicts"
-           echo "SUCCESS_DEV=false" >> $GITHUB_OUTPUT
+            git merge --abort
+            echo "auto merge to dev failed due to conflicts"
+            echo "SUCCESS_DEV=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Update QA
         id: merge-qa
         run: |
           git checkout qa
           if git merge --no-ff --no-edit -m "Merge master into qa (Github auto merge)" origin/master; then
-           git push origin qa
-           echo "SUCCESS_QA=true" >> $GITHUB_OUTPUT
+            git push origin qa
+            echo "SUCCESS_QA=true" >> $GITHUB_OUTPUT
           else
-           git merge --abort
-           echo "auto merge to qa failed due to conflicts"
-           echo "SUCCESS_QA=false" >> $GITHUB_OUTPUT
+            git merge --abort
+            echo "auto merge to qa failed due to conflicts"
+            echo "SUCCESS_QA=false" >> $GITHUB_OUTPUT
+          fi
 
 
 
