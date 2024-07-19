@@ -47,6 +47,7 @@ jobs:
             git merge --abort
             echo "auto merge to qa failed due to conflicts"
             echo "SUCCESS_QA=false" >> $GITHUB_OUTPUT
+            echo "${{ toJSON(github) }}"
           fi
 
 
@@ -92,7 +93,7 @@ jobs:
                       "short": true
                     }
                   ],
-                  "footer": "<https://github.com/${{ github.workflow }}|This slack message was automatically generated via the 'Auto merge latest' Github Actions workflow>"
+                  "footer": "<https://github.com/${{ github.workflow_ref }}|This slack message was automatically generated via the 'Auto merge latest' Github Actions workflow>"
                 }
               ]
             }
