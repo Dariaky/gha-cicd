@@ -54,5 +54,5 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Deploy
         run: |
-          aws s3 sync ./public s3://${{S3_BUCKET}} --region ${{ env.AWS_REGION }} --delete
-          echo "Deployed to <http://${{S3_BUCKET}}.s3-website-${{ env.AWS_REGION }}.amazonaws.com>"
+          aws s3 sync ./public s3://${{ env.S3_BUCKET }} --region ${{ env.AWS_REGION }} --delete
+          echo "Deployed to <http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com>"
