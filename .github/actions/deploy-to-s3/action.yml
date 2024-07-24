@@ -1,14 +1,8 @@
 name: Deploy to AWS S3 environment specific
 description: Deploy to AWS S3 based on environment
 
-inputs:
-  environment:
-    description: Deployment environment
-    required: true
-
 runs:
   using: 'composite'
-  environment: ${{ inputs.environment }}
   env:
     S3_BUCKET: ${{ secrets.AWS_BUCKET }}
     AWS_REGION: us-east-1
