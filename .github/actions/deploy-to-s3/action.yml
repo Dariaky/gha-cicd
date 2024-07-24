@@ -1,0 +1,32 @@
+name: Deploy to AWS S3 environment specific
+description: Deploy to AWS S3 based on environment
+
+inputs:
+  environment:
+    description: Deployment environment
+    required: true
+
+runs:
+  using: 'composite'
+  environment: ${{ inputs.environment }}
+  env:
+    S3_BUCKET: ${{ secrets.AWS_BUCKET }}
+    AWS_REGION: us-east-1
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: gha-cicd-artifacts
+        path: public
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    - name: Deploy
+      run: |
+        aws s3 sync ./public s3://${{ env.S3_BUCKET }} --region ${{ env.AWS_REGION }} --delete
+        echo "Deployed to <http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com>"
