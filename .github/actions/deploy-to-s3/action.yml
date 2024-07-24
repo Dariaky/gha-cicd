@@ -2,6 +2,9 @@ name: Deploy to AWS S3 environment specific
 description: Deploy to AWS S3 based on environment
 
 inputs:
+  artifact_name:
+    description: Name of the artifact to download
+    required: true
   environment_name:
     description: Environment name
     required: true
@@ -25,10 +28,10 @@ runs:
         echo "AWS_ACCESS_KEY_ID=${{ inputs.aws_access_key_id }}" >> $GITHUB_ENV
         echo "AWS_SECRET_ACCESS_KEY=${{ inputs.aws_secret_access_key }}" >> $GITHUB_ENV
         echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
-    - name: Download artifacts
+    - name: Download artifact
       uses: actions/download-artifact@v4
       with:
-        name: gha-cicd-artifacts
+        name: ${{ inputs.artifact_name }}
         path: public
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4

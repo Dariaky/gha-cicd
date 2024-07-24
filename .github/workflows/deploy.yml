@@ -28,10 +28,10 @@ jobs:
         run: npm ci
       - name: Build application
         run: npm run build
-      - name: Upload artifacts
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: gha-cicd-artifacts
+          name: gha-cicd-artifact
           path: dist/gha-cicd/browser
 
   deploy_dev:
@@ -45,6 +45,7 @@ jobs:
       - name: DEV setup
         uses: ./.github/actions/deploy-to-s3
         with:
+          artifact_name: gha-cicd-artifact
           environment_name: dev
           aws_bucket: ${{ secrets.AWS_BUCKET }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
