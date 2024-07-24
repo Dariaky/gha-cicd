@@ -1,9 +1,11 @@
 name: Deploy to AWS S3
-run-name: Production deployment to AWS S3
+run-name: Deployment to AWS S3
 on:
   push:
     branches:
       - master
+      - dev
+      - qa
 
 jobs:
   test:
@@ -32,6 +34,38 @@ jobs:
           name: gha-cicd-artifacts
           path: dist/gha-cicd/browser
 
+  deploy_dev:
+    if: github.ref == 'refs/heads/dev'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: DEV setup
+        uses: ./.github/actions/deploy-to-s3
+        with:
+          environment_name: dev
+          aws_bucket: ${{ secrets.AWS_BUCKET }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  deploy_qa:
+    if: github.ref == 'refs/heads/qa'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: qa
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: QA setup
+        uses: ./.github/actions/deploy-to-s3
+        with:
+          environment_name: qa
+          aws_bucket: ${{ secrets.AWS_BUCKET }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
   deploy_production:
     if: github.ref == 'refs/heads/master'
     needs: build
@@ -40,9 +74,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Production deployment
+      - name: Production setup
         uses: ./.github/actions/deploy-to-s3
         with:
+          environment_name: production
           aws_bucket: ${{ secrets.AWS_BUCKET }}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

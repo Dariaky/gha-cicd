@@ -2,6 +2,9 @@ name: Deploy to AWS S3 environment specific
 description: Deploy to AWS S3 based on environment
 
 inputs:
+  environment_name:
+    description: Environment name
+    required: true
   aws_bucket:
     description: AWS bucket
     required: true
@@ -33,7 +36,7 @@ runs:
         aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
-    - name: Deploy
+    - name: Deploy ${{ inputs.environment_name }} to AWS S3
       shell: bash
       run: |
         aws s3 sync ./public s3://${{ env.AWS_BUCKET }} --region ${{ env.AWS_REGION }} --delete
