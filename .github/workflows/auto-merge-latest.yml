@@ -55,6 +55,8 @@ jobs:
    needs: merge-branches
    if: needs.merge-branches.outputs.SUCCESS_DEV == 'true'
    steps:
+     - name: Checkout
+       uses: actions/checkout@v4
      - name: Deploy DEV to AWS S3
        uses: ./.github/actions/deploy-to-s3
        with:
@@ -68,6 +70,8 @@ jobs:
     needs: merge-branches
     if: needs.merge-branches.outputs.SUCCESS_QA == 'true'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Deploy QA to AWS S3
         uses: ./.github/actions/deploy-to-s3
         with:
