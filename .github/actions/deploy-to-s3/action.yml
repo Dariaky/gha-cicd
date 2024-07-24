@@ -1,10 +1,23 @@
 name: Deploy to AWS S3 environment specific
 description: Deploy to AWS S3 based on environment
 
+inputs:
+  aws_bucket:
+    description: 'AWS bucket'
+    required: true
+  aws_access_key_id:
+    description: 'AWS access key ID'
+    required: true
+  aws_secret_access_key:
+    description: 'AWS secret access key'
+    required: true
+
 runs:
   using: 'composite'
   env:
-    S3_BUCKET: ${{ secrets.AWS_BUCKET }}
+    AWS_BUCKET: ${{ inputs.aws_bucket }}
+    AWS_ACCESS_KEY_ID: ${{ inputs.aws_access_key_id }}
+    AWS_SECRET_ACCESS_KEY: ${{ inputs.aws_secret_access_key }}
     AWS_REGION: us-east-1
   steps:
     - name: Download artifacts
@@ -20,5 +33,5 @@ runs:
         aws-region: ${{ env.AWS_REGION }}
     - name: Deploy
       run: |
-        aws s3 sync ./public s3://${{ env.S3_BUCKET }} --region ${{ env.AWS_REGION }} --delete
-        echo "Deployed to <http://${{ env.S3_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com>"
+        aws s3 sync ./public s3://${{ env.AWS_BUCKET }} --region ${{ env.AWS_REGION }} --delete
+        echo "Deployed to <http://${{ env.AWS_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com>"
