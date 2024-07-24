@@ -36,7 +36,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      S3_BUCKET: dk-gha-prod
+      S3_BUCKET: ${{ secrets.AWS_BUCKET }}
       AWS_REGION: us-east-1
     steps:
       - name: Checkout
