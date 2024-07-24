@@ -40,4 +40,4 @@ runs:
       shell: bash
       run: |
         aws s3 sync ./public s3://${{ env.AWS_BUCKET }} --region ${{ env.AWS_REGION }} --delete
-        echo "Deployed to <http://${{ env.AWS_BUCKET }}.s3-website-${{ env.AWS_REGION }}.amazonaws.com>"
+        echo "Deployed successfully to ${{ inputs.environment_name }}!"
