@@ -49,6 +49,33 @@ jobs:
             echo "SUCCESS_QA=false" >> $GITHUB_OUTPUT
           fi
 
+
+  deploy_to_dev:
+   runs-on: ubuntu-latest
+   needs: merge-branches
+   if: needs.merge-branches.outputs.SUCCESS_DEV == 'true'
+   steps:
+     - name: Deploy DEV to AWS S3
+       uses: ./.github/actions/deploy-to-s3
+       with:
+         environment_name: dev
+         aws_bucket: ${{ secrets.AWS_BUCKET }}
+         aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  deploy_to_qa:
+    runs-on: ubuntu-latest
+    needs: merge-branches
+    if: needs.merge-branches.outputs.SUCCESS_QA == 'true'
+    steps:
+      - name: Deploy QA to AWS S3
+        uses: ./.github/actions/deploy-to-s3
+        with:
+          environment_name: qa
+          aws_bucket: ${{ secrets.AWS_BUCKET }}
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
   post-to-slack:
     runs-on: ubuntu-latest
     needs: merge-branches
