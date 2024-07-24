@@ -14,12 +14,13 @@ inputs:
 
 runs:
   using: 'composite'
-  env:
-    AWS_BUCKET: ${{ inputs.aws_bucket }}
-    AWS_ACCESS_KEY_ID: ${{ inputs.aws_access_key_id }}
-    AWS_SECRET_ACCESS_KEY: ${{ inputs.aws_secret_access_key }}
-    AWS_REGION: us-east-1
   steps:
+    - name: Set environment variables
+      run: |
+        echo "AWS_BUCKET=${{ inputs.aws_bucket }}" >> $GITHUB_ENV
+        echo "AWS_ACCESS_KEY_ID=${{ inputs.aws_access_key_id }}" >> $GITHUB_ENV
+        echo "AWS_SECRET_ACCESS_KEY=${{ inputs.aws_secret_access_key }}" >> $GITHUB_ENV
+        echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
     - name: Download artifacts
       uses: actions/download-artifact@v4
       with:
